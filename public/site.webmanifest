@@ -1,0 +1,16 @@
+{
+  "name": "BOMber",
+  "short_name": "BOMber",
+  "description": "UTF-8/Shift_JISテキストをUTF-8 BOM付きに変換し、ZIPでダウンロードできるツール",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f3f5eb",
+  "theme_color": "#1f4f39",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}
