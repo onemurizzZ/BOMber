@@ -6,12 +6,12 @@
   "packageManager": "pnpm@10.29.2",
   "scripts": {
     "dev": "vite",
-    "dev:cf": "pnpm build && wrangler dev",
+    "dev:cf": "pnpm build && wrangler dev --config wrangler.worker.jsonc",
     "dev:pages": "pnpm build && wrangler pages dev dist",
     "build": "tsc --noEmit && vite build",
-    "preview": "pnpm build && wrangler dev",
+    "preview": "pnpm build && wrangler dev --config wrangler.worker.jsonc",
     "deploy": "pnpm run deploy:pages",
-    "deploy:worker": "pnpm build && wrangler deploy",
+    "deploy:worker": "pnpm build && wrangler deploy --config wrangler.worker.jsonc",
     "deploy:pages": "pnpm build && wrangler pages deploy dist --project-name bomber",
     "test": "vitest run",
     "test:watch": "vitest"
