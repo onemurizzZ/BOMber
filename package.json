@@ -7,9 +7,12 @@
   "scripts": {
     "dev": "vite",
     "dev:cf": "pnpm build && wrangler dev",
+    "dev:pages": "pnpm build && wrangler pages dev dist",
     "build": "tsc --noEmit && vite build",
     "preview": "pnpm build && wrangler dev",
-    "deploy": "pnpm build && wrangler deploy",
+    "deploy": "pnpm run deploy:pages",
+    "deploy:worker": "pnpm build && wrangler deploy",
+    "deploy:pages": "pnpm build && wrangler pages deploy dist --project-name bomber",
     "test": "vitest run",
     "test:watch": "vitest"
   },
