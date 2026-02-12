@@ -33,12 +33,18 @@ const fuseFill = requireElement<HTMLDivElement>("#fuse-progress");
 const fuseSparkTip = requireElement<HTMLDivElement>("#fuse-spark-tip");
 const explosionOverlay = requireElement<HTMLDivElement>("#explosion-overlay");
 const fileCountBadge = requireElement<HTMLSpanElement>("#file-count");
+const heroBomb = requireElement<HTMLDivElement>("#hero-bomb");
+const bombClickCounter = requireElement<HTMLSpanElement>("#bomb-click-counter");
+const megaExplosionOverlay = requireElement<HTMLDivElement>("#mega-explosion-overlay");
+const megaDebrisContainer = requireElement<HTMLDivElement>("#mega-debris-container");
 
 /* -------------------------------------------------------
    State
    ------------------------------------------------------- */
 let selectedFiles: File[] = [];
 let webMcpCleanup: (() => void) | undefined;
+let bombClickCount = 0;
+const MEGA_EXPLOSION_THRESHOLD = 100;
 
 /* -------------------------------------------------------
    WebMCP
@@ -368,6 +374,97 @@ fileInput.addEventListener("change", () => {
 convertButton.addEventListener("click", () => {
   void runConversion();
 });
+
+/* -------------------------------------------------------
+   Bomb click Easter egg — 100 clicks = mega explosion
+   ------------------------------------------------------- */
+function spawnDebris(): void {
+  megaDebrisContainer.innerHTML = "";
+  const count = 40;
+  for (let i = 0; i < count; i++) {
+    const el = document.createElement("div");
+    el.className = "mega-debris";
+    const angle = (Math.PI * 2 * i) / count + (Math.random() - 0.5) * 0.4;
+    const dist = 200 + Math.random() * 400;
+    const dx = Math.cos(angle) * dist;
+    const dy = Math.sin(angle) * dist;
+    el.style.setProperty("--dx", `${dx}px`);
+    el.style.setProperty("--dy", `${dy}px`);
+    el.style.setProperty("--debris-duration", `${0.8 + Math.random() * 0.8}s`);
+    el.style.setProperty("--debris-delay", `${Math.random() * 0.15}s`);
+    el.style.width = `${4 + Math.random() * 8}px`;
+    el.style.height = el.style.width;
+    const colors = ["#fff", "#ffd666", "#ff9a4d", "#ff6b35", "#ff4444"];
+    el.style.background = colors[Math.floor(Math.random() * colors.length)];
+    megaDebrisContainer.appendChild(el);
+  }
+}
+
+function triggerMegaExplosion(): void {
+  // Shatter the bomb
+  heroBomb.classList.add("is-shattered");
+
+  // Spawn debris particles
+  spawnDebris();
+
+  // Activate mega explosion overlay
+  megaExplosionOverlay.classList.remove("is-active");
+  void megaExplosionOverlay.offsetWidth;
+  megaExplosionOverlay.classList.add("is-active");
+
+  // Shake the entire page
+  document.body.classList.add("mega-shake");
+
+  // Hide counter
+  bombClickCounter.classList.remove("is-visible", "is-near");
+  bombClickCounter.textContent = "";
+
+  // Clean up after animation
+  setTimeout(() => {
+    megaExplosionOverlay.classList.remove("is-active");
+    document.body.classList.remove("mega-shake");
+    heroBomb.classList.remove("is-shattered");
+    heroBomb.classList.add("is-recovering");
+  }, 2000);
+
+  setTimeout(() => {
+    heroBomb.classList.remove("is-recovering");
+    megaDebrisContainer.innerHTML = "";
+  }, 3500);
+
+  // Reset counter
+  bombClickCount = 0;
+}
+
+function handleBombClick(): void {
+  bombClickCount++;
+
+  // Click bump animation
+  heroBomb.classList.remove("is-clicked");
+  void heroBomb.offsetWidth;
+  heroBomb.classList.add("is-clicked");
+  heroBomb.addEventListener("animationend", () => {
+    heroBomb.classList.remove("is-clicked");
+  }, { once: true });
+
+  if (bombClickCount >= MEGA_EXPLOSION_THRESHOLD) {
+    triggerMegaExplosion();
+    return;
+  }
+
+  // Show counter after 10 clicks
+  if (bombClickCount >= 10) {
+    bombClickCounter.textContent = String(bombClickCount);
+    bombClickCounter.classList.add("is-visible");
+  }
+
+  // Intensify when close to threshold
+  if (bombClickCount >= 80) {
+    bombClickCounter.classList.add("is-near");
+  }
+}
+
+heroBomb.addEventListener("click", handleBombClick);
 
 window.addEventListener("beforeunload", () => {
   webMcpCleanup?.();

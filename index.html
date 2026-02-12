@@ -147,6 +147,15 @@
     <!-- Explosion flash overlay -->
     <div id="explosion-overlay" class="explosion-overlay" aria-hidden="true"></div>
 
+    <!-- Mega explosion overlay (100 clicks Easter egg) -->
+    <div id="mega-explosion-overlay" class="mega-explosion-overlay" aria-hidden="true">
+      <div class="mega-flash"></div>
+      <div class="mega-ring mega-ring-1"></div>
+      <div class="mega-ring mega-ring-2"></div>
+      <div class="mega-ring mega-ring-3"></div>
+      <div class="mega-debris-container" id="mega-debris-container"></div>
+    </div>
+
     <!-- Floating spark particles -->
     <div class="sparks" aria-hidden="true">
       <div class="spark"></div>
@@ -160,7 +169,8 @@
     <main class="container" id="app">
       <!-- HERO -->
       <header class="hero">
-        <div class="bomb-icon" aria-hidden="true">
+        <div class="bomb-icon" id="hero-bomb" role="button" tabindex="0" aria-label="爆弾を連打！">
+          <span id="bomb-click-counter" class="bomb-click-counter"></span>
           <svg viewBox="0 -24 120 168" fill="none" xmlns="http://www.w3.org/2000/svg">
             <defs>
               <radialGradient id="bomb-grad" cx="40%" cy="35%" r="55%">
